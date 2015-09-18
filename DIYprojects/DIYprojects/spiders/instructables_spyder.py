@@ -16,19 +16,21 @@ class DIYSpider(scrapy.Spider):
         "http://www.instructables.com/tag/type-id/category-technology/"
     ]
     
-
     def parse(self, response):
-        for sel in response.selector.xpath("//div[@class='cover-info ']/span[@class='title']"): 
-            hyperREF= sel.xpath("a/@href")
-            allstepAPIkey = "?ALLSTEPS"
-            url = response.urljoin(hyperREF.extract()) + allstepAPIkey
-            print url
-            yield scrapy.Request(url, callback=self.parse_tech_page)
-        
-
-    def parse_tech_page(self, response):
-        for sel in response.xpath('//div[@id="instructable-steps"]'):
-            print sel.url
+        for sel in response.selector.xpath("//div[@class='projects']/ul[@class='h-list explore-covers-list clearfix']/li"):
+            item = DiyprojectsItem()          
+            item["projectURL"] = sel.xpath(".//div[@class='cover-info ']/span[@class='title']/a/@href").extract()
+            item["projectName"] = sel.xpath(".//div[@class='cover-stats']/span/text()").extract()
+            item["views"] = sel.xpath(".//span[@class='views']/text()").extract()
+            item["favorites"] = sel.xpath(".//span[@class='tutorials']/text()").extract()
+            yield item
+            
+        next_page = response.xpath("//div[@class='pagination fr']/ul/li[last()]/a/@href")
+        if(next_page):
+            scrapy.Request(next_page
+#    def parse_tech_page(self, response):
+#        for sel in response.xpath('//div[@id="instructable-steps"]'):
+#            print sel.url
 #            item = DiyprojectsItem()          
 #            item["projectURL"] = sel.xpath('a/text()').extract()
 #            item["lists"] = sel.xpath('a/@href').extract()
