@@ -13,21 +13,25 @@ class DIYSpider(scrapy.Spider):
     name = "diySpider"
     allowed_domains = ["instructables.com"]
     start_urls = [
-        "http://www.instructables.com/tag/type-id/category-technology/"
+        "http://www.instructables.com/tag/type-id/category-technology/?&offset=0"
     ]
     
     def parse(self, response):
         for sel in response.selector.xpath("//div[@class='projects']/ul[@class='h-list explore-covers-list clearfix']/li"):
             item = DiyprojectsItem()          
             item["projectURL"] = sel.xpath(".//div[@class='cover-info ']/span[@class='title']/a/@href").extract()
-            item["projectName"] = sel.xpath(".//div[@class='cover-stats']/span/text()").extract()
+            item["projectName"] = sel.xpath(".//div[@class='cover-info ']/span[@class='title']/a/@title").extract()
             item["views"] = sel.xpath(".//span[@class='views']/text()").extract()
-            item["favorites"] = sel.xpath(".//span[@class='tutorials']/text()").extract()
+            item["favorites"] = sel.xpath(".//span[@class='favorites']/text()").extract()
+
             yield item
-            
+        fliped = False    
         next_page = response.xpath("//div[@class='pagination fr']/ul/li[last()]/a/@href")
-        if(next_page):
-            scrapy.Request(next_page
+        if(next_page and not fliped):
+            url = response.urljoin(next_page[0].extract())            
+            scrapy.Request(url, callback = self.parse)
+            print 'yeah'
+            fliped = True
 #    def parse_tech_page(self, response):
 #        for sel in response.xpath('//div[@id="instructable-steps"]'):
 #            print sel.url
