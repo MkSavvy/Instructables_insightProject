@@ -29,20 +29,19 @@ class contentSpider(scrapy.Spider):
         item["views"]  =  head_path.xpath("./meta[@itemprop='interactionCount']/@content").extract()
         
         item["author"]  = response.selector.xpath("//span[@class='author']/text()").extract()
-        
+        item["Nsteps"]  = response.selector.xpath("//*[@id='jump-to-step-btn']/text()").extract()
+        item["tags"]  = response.selector.xpath("//div[@class='ible-tags']/div/a/text()").extract()  
+        item["award"]  = scrapy.Field()   
+        item["relatedURL"] = response.selector.xpath("//div[@id='related-instructables']/ul/li[position()<5]/div/a/@href").extract()  
+#       
         body_path = response.selector.xpath("//div[@id='main-content']")        
         item["descr"] = body_path.xpath(".//div[@class='txt step-body']/p/text()").extract()
         item["scripts"] = body_path.xpath(".//div[@class='txt step-body']/pre/text()").extract()
-        item[""] Nsteps = scrapy.Field()
-#       item[""] tags = scrapy.Field()
-        yield item
-#               item["award"]  = scrapy.Field()   
-#       item[""]relatedURL = scrapy.Field()
-#       item[""]comments = scrapy.Field()
-#       item[""] tools = scrapy.Field()
-#       item[""] Nimages = scrapy.Field()
-#       item[""] Nvideos = scrapy.Field()
-#       item[""] Nlink = scrapy.Field()
+        item["comments"] = body_path.xpath(".//*[@class='txt comment-txt']//text()").extract()
+        item["tools"]  = body_path.xpath(".//*[@id='instructable-steps']/div/div/table/tbody/tr/td/text()").extract()
+#       item["Nimages"]  = scrapy.Field()
+#       item["Nvideos"]  = scrapy.Field()
+#       item["Nlink"]  = scrapy.Field()
 #        yield item
                
    

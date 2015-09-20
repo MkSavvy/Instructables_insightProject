@@ -20,10 +20,12 @@ class DiycontentItem(scrapy.Item):
     tags = scrapy.Field()
     relatedURL = scrapy.Field()
     descr = scrapy.Field()
+    scripts = scrapy.Field()
     comments = scrapy.Field()
     tools = scrapy.Field()
     Nsteps = scrapy.Field()
     Nimages = scrapy.Field()
     Nvideos = scrapy.Field()
     Nlink = scrapy.Field()
+    views = scrapy.Field()
     pass
